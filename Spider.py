@@ -3,27 +3,46 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import sys
+import os
 
-def download_image():
-	pass
+def download_image(thelink, storage):
+	gg= requests.get(thelink)
+	if gg.status_code==200:
+		with open(storage , 'wb') as f:
+			for chunk in gg.iter_content(2048):
+				f.write(chunk)
+
+def chk_not_reddit(pp):
+	qq= pp.split("/")
+	for i in qq:
+		if i=="www.reddit.com":
+			return false
+	
 
 
+folder    = r"C:\Users\BOSE\Documents\2016\Code\image"
 r         = praw.Reddit(user_agent= "Wallpaper fetch by Bose")
-walls     = r.get_subreddit('wallpapers').get_top(limit=10)
-urls      = [str(x.url) for x in walls]
-chk_imgur = re.compile('(imgur)+?')
+walls     = r.get_subreddit('wallpapers').get_hot(limit=10)	#fetch top 10 images
+urls      = [str(x.url) for x in walls]						#fetch urls and store as strings
+chk_imgur = re.compile('(imgur\.com)+?')					#check if imgur page
+counter   = 0
 
+
+print "The retrieved links are:\n"
 for j in urls:
 	print j
 
-print "--------------\n\n"
+print "--------------\n\n Downloading links: \n"
 
 for j in urls:
 	if chk_imgur.search(j):
 		found          = re.search('(imgur\.com/a/)+', j)  #check if imgur album
 		chk_image_only = re.search('(i\.imgur\.com)+', j)  #check if imgur image
+		counter       += 1
+		path           = folder+str(counter)+".jpg"
 		
-		if found:
+		#code for imgur albums
+		if found:										   
 			album_imgs = []
 			link       = requests.get(j)
 			soup       = BeautifulSoup(link.content, "html.parser")
@@ -33,16 +52,27 @@ for j in urls:
 				if imgs:
 					album_imgs.append(imgs.group(1))	
 			for k in album_imgs:
-				print k
-				download_image()
+				counter+=1
+				print "Downloading image: " + str(counter) +".....%"
+				download_image("http://"+k, path)
 
+		#code for imgur images
 		elif chk_image_only:
 			link = requests.get(j)
-			download_image()
+			if link.status_code==200:
+				print "Downloading image: " + str(counter) +".....%"
+				with open(path , 'wb') as f:
+					for chunk in link.iter_content(2048):
+						f.write(chunk)
+			
 
-		else:
+		#for when imgur page with image is given
+		elif chk_not_reddit(j):
 			link     = requests.get(j)			
 			soup     = BeautifulSoup(link.content, "html.parser")
 			img_link = (re.search('src="//(.+?)"/>', str(soup.select(".post-image img")))).group(1)
-			print img_link
-			download_image()
+			print "Downloading image: " + str(counter) +".....%"
+			download_image("http://"+img_link, path)
+
+		else:
+			continue
