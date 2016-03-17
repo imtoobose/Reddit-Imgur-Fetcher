@@ -19,12 +19,13 @@ def chk_not_reddit(pp):
 			return false
 	
 
+print "Reddit Imgur Image Fetch Running v.1.0.1"
 
 folder    = r"C:\Users\BOSE\Documents\2016\Code\image"
 r         = praw.Reddit(user_agent= "Wallpaper fetch by Bose")
-walls     = r.get_subreddit('wallpapers').get_hot(limit=10)	#fetch top 10 images
-urls      = [str(x.url) for x in walls]						#fetch urls and store as strings
-chk_imgur = re.compile('(imgur\.com)+?')					#check if imgur page
+walls     = r.get_subreddit('wallpapers').get_top_from_all(limit=10)	#fetch top 10 images
+urls      = [str(x.url) for x in walls]									#fetch urls and store as strings
+chk_imgur = re.compile('(imgur\.com)+?')								#check if imgur page
 counter   = 0
 
 
@@ -40,7 +41,7 @@ for j in urls:
 		chk_image_only = re.search('(i\.imgur\.com)+', j)  #check if imgur image
 		counter       += 1
 		path           = folder+str(counter)+".jpg"
-		
+
 		#code for imgur albums
 		if found:										   
 			album_imgs = []
@@ -50,17 +51,22 @@ for j in urls:
 			for k in img_links:
 				imgs   = re.search('src="//(.+?)"/>', k)
 				if imgs:
-					album_imgs.append(imgs.group(1))	
+					album_imgs.append(imgs.group(1))
+
+			print "Downloading an album\n"
 			for k in album_imgs:
-				counter+=1
+				counter += 1
+				a_path   = folder+str(counter)+".jpg"
 				print "Downloading image: " + str(counter) +".....%"
-				download_image("http://"+k, path)
+				download_image("http://"+k, a_path)
+			print "\nAlbum downloaded\n"
 
 		#code for imgur images
 		elif chk_image_only:
 			link = requests.get(j)
 			if link.status_code==200:
 				print "Downloading image: " + str(counter) +".....%"
+				print path
 				with open(path , 'wb') as f:
 					for chunk in link.iter_content(2048):
 						f.write(chunk)
