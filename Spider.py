@@ -23,7 +23,7 @@ print "Reddit Imgur Image Fetch Running v.1.0.1"
 
 folder    = r"C:\Users\BOSE\Documents\2016\Code\image"
 r         = praw.Reddit(user_agent= "Wallpaper fetch by Bose")
-walls     = r.get_subreddit('wallpapers').get_top_from_all(limit=10)	#fetch top 10 images
+walls     = r.get_subreddit('wallpapers').get_top_from_week(limit=10)	#fetch top 10 images
 urls      = [str(x.url) for x in walls]									#fetch urls and store as strings
 chk_imgur = re.compile('(imgur\.com)+?')								#check if imgur page
 counter   = 0
