@@ -2,7 +2,7 @@ import praw
 import requests
 from bs4 import BeautifulSoup
 import re
-import sys
+from sys import stdin
 import os
 
 def download_image(thelink, storage):
@@ -19,52 +19,59 @@ def chk_not_reddit(pp):
 			return false
 	
 print "Reddit Imgur Image Fetch Running v.1.0.1"
-print "Enter subreddit name:\n"
-subreddit_n= stdin.readline().strip()
-flag=0
+print "Enter subreddit name:"
+subreddit_n = stdin.readline().strip()
+print "Select number of links to be fetched (max 100, default 5)"
+try:
+	no_of_links = int(stdin.readline())
+except TypeError:
+	no_of_links = 5
 
-while flag==0:
-	print "Enter choice:\n1.Top\n2.Hot\n"
+flag        = 0
+folder      = r"C:\Users\BOSE\Documents\2016\Code\image"
+r           = praw.Reddit(user_agent= "Wallpaper fetch by Bose")
+
+while True:
+	print "Enter choice:\n1.Top\n2.Hot"
+	
 	try:
 		choice    = int(stdin.readline())
 	except TypeError:
 		print "Invalid input"
 		continue
 
-	if choice== 1:
-		print "1.Top all time\n2. Top Weekly\n3. Top Daily\n4.Top Hourly\n"
+	if choice == 1:
+		print "1.Top all time\n2. Top Weekly\n3. Top Daily\n4.Top Hourly"
 		try:
 			answer= int(stdin.readline())
 		except TypeError:
 			print "Invalid input"
 			continue
 
-		if answer   == 1 :   
-			red, flag = get_top_from_all,   1
+		if answer   == 1 :
+			walls  = r.get_subreddit(subreddit_n).get_top_from_all(limit= no_of_links)   
+			break
 		elif answer == 2 :
-			red, flag = get_top_from_week,  1 
+			walls  = r.get_subreddit(subreddit_n).get_top_from_week(limit= no_of_links)   
+			break
 		elif answer == 3 :   
-			red, flag = get_top_from_day,   1
+			walls  = r.get_subreddit(subreddit_n).get_top_from_day(limit= no_of_links)   
+			break
 		elif answer == 4 : 
-			red, flag = get_top_from_hour,  1
+			walls  = r.get_subreddit(subreddit_n).get_top_from_hour(limit= no_of_links)   
+			break
 		else:
 			print "Invalid input"
+			continue
 
 	elif choice==2:
-		red, flag = get_hot, 1
+		walls  = r.get_subreddit(subreddit_n).get_hot(limit= no_of_links)
+		break   
 
 	else:
+		print "Invalid input"
 		continue		
 
-print "Select number of links to be fetched (max 100, default 5)\n"
-try:
-	no_of_links = int(stdin.readline())
-except TypeError:
-	no_of_links = 5
-
-folder      = r"C:\Users\BOSE\Documents\2016\Code\image"
-r           = praw.Reddit(user_agent= "Wallpaper fetch by Bose")
-walls       = r.get_subreddit('wallpapers').red(limit= no_of_links)		#fetch top 10 images
 urls        = [str(x.url) for x in walls]								#fetch urls and store as strings
 chk_imgur   = re.compile('(imgur\.com)+?')								#check if imgur page
 counter     = 0
