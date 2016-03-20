@@ -72,9 +72,13 @@ while True:
 		print "Invalid input"
 		continue		
 
+
+with open('settings.txt', 'rb') as g:
+	image_no= int(g.readline())
+
 urls        = [str(x.url) for x in walls]								#fetch urls and store as strings
 chk_imgur   = re.compile('(imgur\.com)+?')								#check if imgur page
-counter     = 0
+counter     = image_no
 
 
 print "The retrieved links are:\n"
@@ -101,7 +105,7 @@ for j in urls:
 				if imgs:
 					album_imgs.append(imgs.group(1))
 
-			print "Downloading an album\n"
+			print "\nDownloading an album\n"
 			for k in album_imgs:
 				counter += 1
 				a_path   = folder+str(counter)+".jpg"
@@ -130,3 +134,6 @@ for j in urls:
 
 		else:
 			continue
+
+with open ('settings.txt', 'wb') as g:
+	g.write(str(counter+1))
