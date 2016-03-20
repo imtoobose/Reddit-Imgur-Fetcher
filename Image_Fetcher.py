@@ -36,7 +36,7 @@ while True:
 	
 	try:
 		choice    = int(stdin.readline())
-	except TypeError:
+	except ValueError:
 		print "Invalid input"
 		continue
 
@@ -44,7 +44,7 @@ while True:
 		print "1.Top all time\n2. Top Weekly\n3. Top Daily\n4.Top Hourly"
 		try:
 			answer= int(stdin.readline())
-		except TypeError:
+		except ValueError:
 			print "Invalid input"
 			continue
 
