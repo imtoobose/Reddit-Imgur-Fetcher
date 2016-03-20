@@ -3,7 +3,7 @@
 
 Downloads (for now) the top weekly submissions of a hard coded subreddit
 To do:
-- [] Create an interface for entering custom subreddit
+- [x] Create an interface for entering custom subreddit
 - [] Make sure same images aren't downloaded again
 
 Other tasks:

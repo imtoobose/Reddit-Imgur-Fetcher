@@ -28,7 +28,7 @@ except TypeError:
 	no_of_links = 5
 
 flag        = 0
-folder      = r"C:\Users\BOSE\Documents\2016\Code\image"
+folder      = os.getcwd() + r"\image"
 r           = praw.Reddit(user_agent= "Wallpaper fetch by Bose")
 
 while True:
